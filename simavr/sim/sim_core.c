@@ -634,6 +634,8 @@ run_one_again:
 	avr_flashaddr_t	new_pc = avr->pc + 2;	// future "default" pc
 	int 			cycle = 1;
 
+        avr->opcode = opcode;
+
 	switch (opcode & 0xf000) {
 		case 0x0000: {
 			switch (opcode) {
