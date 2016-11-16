@@ -1,11 +1,9 @@
-#ifndef __WCET_H__
-#define __WCET_H__
-
-#include <stdint.h>
+#ifndef __SIM_WCET_H__
+#define __SIM_WCET_H__
 
 #include "sim_avr.h"
 
-typedef enum instruction_e {
+enum {
     ADD     = 1,
     ADC     = 1,
     ADIW    = 2,
@@ -124,8 +122,10 @@ typedef enum instruction_e {
     NOP     = 1,
     SLEEP   = 1,
     WDR     = 1
-} instruction_t;
+};
 
-uint32_t decode_instr(uint32_t opcode);
+static uint8_t wcet_calculate_clock_cycle(uint32_t opcode);
 
-#endif //__WCET_H__
+uint64_t wcet_calculate_clock_cycles(avr_t *avr);
+
+#endif //__SIM_WCET_H__

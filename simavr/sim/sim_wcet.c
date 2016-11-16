@@ -1,70 +1,70 @@
-#include "wcet.h"
+#include "sim_wcet.h"
 
-uint32_t decode_instr(uint32_t instr) {
-    switch ((instr & 0xFF00) >> 16) {
-        case 0x00:
-            return NOP;
+static uint8_t wcet_calculate_clock_cycle(uint32_t instr) {
+	switch ((instr & 0xFF00) >> 16) {
+		case 0x00:
+            	return NOP;
 		case 0x01:
-            return MOVW;
+            	return MOVW;
 		case 0x02:
-            return MULS;
+            	return MULS;
 		case 0x03:
-            return FMUL;
+            	return FMUL;
 		case 0x04:
 		case 0x05:
 		case 0x06:
 		case 0x07:
-            return CPC;
+            	return CPC;
 		case 0x08:
 		case 0x09:
 		case 0x0a:
 		case 0x0b:
-            return SBC;
+            	return SBC;
 		case 0x0c:
 		case 0x0d:
 		case 0x0e:
 		case 0x0f:
-            return ADD;
+            	return ADD;
 		case 0x10:
 		case 0x11:
 		case 0x12:
 		case 0x13:
-            return CPSE;
+            	return CPSE;
 		case 0x14:
 		case 0x15:
 		case 0x16:
 		case 0x17:
-            return CP;
+            	return CP;
 		case 0x18:
 		case 0x19:
 		case 0x1a:
 		case 0x1b:
-            return SUB;
+            	return SUB;
 		case 0x1c:
 		case 0x1d:
 		case 0x1e:
 		case 0x1f:
-            return ADC;
+            	return ADC;
 		case 0x20:
 		case 0x21:
 		case 0x22:
 		case 0x23:
-            return AND;
+            	return AND;
 		case 0x24:
 		case 0x25:
 		case 0x26:
 		case 0x27:
-            return EOR;
+            	return EOR;
 		case 0x28:
 		case 0x29:
 		case 0x2a:
 		case 0x2b:
-            return OR;
+            	return OR;
 		case 0x2c:
 		case 0x2d:
 		case 0x2e:
 		case 0x2f:
-            return MOV;
+            	return MOV;
 		case 0x30:
 		case 0x31:
 		case 0x32:
@@ -81,7 +81,7 @@ uint32_t decode_instr(uint32_t instr) {
 		case 0x3d:
 		case 0x3e:
 		case 0x3f:
-            return CPI;
+            	return CPI;
 		case 0x40:
 		case 0x41:
 		case 0x42:
@@ -98,7 +98,7 @@ uint32_t decode_instr(uint32_t instr) {
 		case 0x4d:
 		case 0x4e:
 		case 0x4f:
-            return SBCI;
+            	return SBCI;
 		case 0x50:
 		case 0x51:
 		case 0x52:
@@ -115,7 +115,7 @@ uint32_t decode_instr(uint32_t instr) {
 		case 0x5d:
 		case 0x5e:
 		case 0x5f:
-            return SUBI;
+            	return SUBI;
 		case 0x60:
 		case 0x61:
 		case 0x62:
@@ -132,7 +132,7 @@ uint32_t decode_instr(uint32_t instr) {
 		case 0x6d:
 		case 0x6e:
 		case 0x6f:
-            return ORI;
+            	return ORI;
 		case 0x70:
 		case 0x71:
 		case 0x72:
@@ -149,7 +149,7 @@ uint32_t decode_instr(uint32_t instr) {
 		case 0x7d:
 		case 0x7e:
 		case 0x7f:
-            return ANDI;
+            	return ANDI;
 		case 0x80:
 		case 0x81:
 		case 0x82:
@@ -166,7 +166,7 @@ uint32_t decode_instr(uint32_t instr) {
 		case 0x8d:
 		case 0x8e:
 		case 0x8f:
-            return 0x8f;
+            	return STD;
 		case 0x90:
 		case 0x91:
 		case 0x92:
@@ -183,7 +183,7 @@ uint32_t decode_instr(uint32_t instr) {
 		case 0x9d:
 		case 0x9e:
 		case 0x9f:
-            return 0x05;
+            	return 0x05;
 		case 0xa0:
 		case 0xa1:
 		case 0xa2:
@@ -200,7 +200,7 @@ uint32_t decode_instr(uint32_t instr) {
 		case 0xad:
 		case 0xae:
 		case 0xaf:
-            return STD;
+            	return STD;
 		case 0xb0:
 		case 0xb1:
 		case 0xb2:
@@ -209,7 +209,7 @@ uint32_t decode_instr(uint32_t instr) {
 		case 0xb5:
 		case 0xb6:
 		case 0xb7:
-            return IN;
+            	return IN;
 		case 0xb8:
 		case 0xb9:
 		case 0xba:
@@ -218,7 +218,7 @@ uint32_t decode_instr(uint32_t instr) {
 		case 0xbd:
 		case 0xbe:
 		case 0xbf:
-            return OUT;
+            	return OUT;
 		case 0xc0:
 		case 0xc1:
 		case 0xc2:
@@ -235,7 +235,7 @@ uint32_t decode_instr(uint32_t instr) {
 		case 0xcd:
 		case 0xce:
 		case 0xcf:
-            return RJMP;
+            	return RJMP;
 		case 0xd0:
 		case 0xd1:
 		case 0xd2:
@@ -252,7 +252,7 @@ uint32_t decode_instr(uint32_t instr) {
 		case 0xdd:
 		case 0xde:
 		case 0xdf:
-            return RCALL;
+            	return RCALL;
 		case 0xe0:
 		case 0xe1:
 		case 0xe2:
@@ -269,7 +269,7 @@ uint32_t decode_instr(uint32_t instr) {
 		case 0xed:
 		case 0xee:
 		case 0xef:
-            return LDI;
+			return LDI;
 		case 0xf0:
 		case 0xf1:
 		case 0xf2:
@@ -288,4 +288,15 @@ uint32_t decode_instr(uint32_t instr) {
 		case 0xff:
             	return 0x03;
     }
+}
+
+uint64_t wcet_calculate_clock_cycles(avr_t *avr)
+{
+	uint64_t cycles = 0;
+
+	while (avr_run(avr) && avr->opcode != 0xCFFF) {
+        cycles += wcet_calculate_clock_cycle(avr->opcode);
+    }
+
+    return cycles;
 }
