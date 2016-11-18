@@ -124,7 +124,7 @@ enum {
     WDR     = 1
 };
 
-static uint8_t wcet_calculate_clock_cycle(uint32_t opcode);
+uint8_t wcet_calculate_clock_cycle(uint32_t opcode);
 
 uint64_t wcet_calculate_clock_cycles(avr_t *avr);
 

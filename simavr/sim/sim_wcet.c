@@ -1,6 +1,6 @@
 #include "sim_wcet.h"
 
-static uint8_t wcet_calculate_clock_cycle(uint32_t instr) {
+uint8_t wcet_calculate_clock_cycle(uint32_t instr) {
 	switch ((instr & 0xFF00) >> 16) {
 		case 0x00:
             	return NOP;
