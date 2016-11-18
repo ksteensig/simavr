@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
 	elf_read_firmware(fname, &f);
 
-   	avr = avr_make_mcu_by_name(f.mmcu);
+   	avr = avr_make_mcu_by_name("atmega328p");
 
     avr_init(avr);
 	avr_load_firmware(avr, &f);
